@@ -1,0 +1,35 @@
+---
+- name: Ensure management packages are installed
+  become: true
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - bzip2                    # Ensure archive unpacking works
+    - firewalld
+    - libselinux-python        # Manage SELinux
+    - policycoreutils-python   # Manage SELinux
+    - python-firewall          # Manage Firewalld
+    - setroubleshoot-server
+
+- name: Ensure SELinux is set to enforcing
+  become: true
+  selinux:
+    policy: targeted
+    state: enforcing
+
+- name: Ensure firewall is online
+  become: true
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Ensure port 5353 is opened for Avahi
+  become: true
+  when: avahi.enabled
+  firewalld:
+    service: mdns
+    state: enabled
+    immediate: true
+    permanent: true

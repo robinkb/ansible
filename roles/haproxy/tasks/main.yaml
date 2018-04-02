@@ -1,0 +1,88 @@
+---
+- name: Ensure HAProxy and pyOpenSSL are installed
+  become: true
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - haproxy
+    - pyOpenSSL
+
+- name: Ensure SELinux boolean haproxy_connect_any is enabled
+  become: true
+  seboolean:
+    state: true
+    name: haproxy_connect_any
+    persistent: true
+
+- name: Ensure HAProxy conf.d structure is present
+  become: true
+  file:
+    state: directory
+    path: /etc/haproxy/conf.d
+    mode: 0755
+
+- name: Ensure the default backend private key is present
+  become: true
+  openssl_privatekey:
+    state: present
+    path: /etc/pki/tls/private/default.pem
+
+- name: Ensure the default certificate signing request is present
+  become: true
+  openssl_csr:
+    state: present
+    path: /etc/pki/tls/certs/default.csr
+    privatekey_path: /etc/pki/tls/private/default.pem
+    common_name: default
+
+- name: Ensure the default certificate is present
+  become: true
+  openssl_certificate:
+    state: present
+    path: /etc/pki/tls/certs/default.pem
+    csr_path: /etc/pki/tls/certs/default.csr
+    privatekey_path: /etc/pki/tls/private/default.pem
+    provider: selfsigned
+
+- name: Ensure the default certificate bundle is present
+  become: true
+  shell: |
+      cat /etc/pki/tls/private/default.pem /etc/pki/tls/certs/default.pem \
+        > /etc/pki/tls/private/default.bundle
+  args:
+    creates: /etc/pki/tls/private/default.bundle
+
+- name: Deploy default configuration
+  become: true
+  template:
+    src: 00-haproxy.cfg
+    dest: /etc/haproxy/conf.d/00-haproxy.cfg
+
+- name: Rebuild HAProxy configuration
+  become: true
+  assemble:
+    src: /etc/haproxy/conf.d
+    dest: /etc/haproxy/haproxy.cfg
+    delimiter: '\n### START FRAGMENT ###'
+    validate: 'haproxy -c -V -f %s'
+  notify:
+    - reload haproxy
+
+- name: Ensure HTTP and HTTPS ports are opened
+  become: true
+  firewalld:
+    state: enabled
+    service: "{{ item }}"
+    immediate: true
+    permanent: true
+  with_items:
+    - http
+    - https
+
+- name: Ensure HAproxy is running and enabled
+  become: true
+  service:
+    state: started
+    name: haproxy
+    enabled: true

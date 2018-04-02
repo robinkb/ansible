@@ -1,0 +1,27 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: Ensure development software is installed
+      become: true
+      package:
+        state: present
+        name: "{{ item }}"
+      with_items:
+        - ansible-lint
+        - yamllint
+        - vagrant
+        - vagrant-libvirt
+
+    - name: Configure SSH for local Vagrant
+      blockinfile:
+        state: present
+        backup: true
+        block: |
+          Host *.local
+          User vagrant
+          StrictHostKeyChecking no
+          UserKnownHostsFile /dev/null
+        create: true
+        mode: u=rw,g=r,o=r
+        path: ~/.ssh/config

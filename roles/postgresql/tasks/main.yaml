@@ -1,0 +1,49 @@
+---
+- name: Ensure PostgreSQL is installed
+  become: true
+  package:
+    state: present
+    name: postgresql-server
+
+- name: Ensure Python PostgreSQL adapter is installed
+  become: true
+  package:
+    state: present
+    name: python2-psycopg2
+
+- name: Ensure PostgreSQL database is initialized
+  become: true
+  become_user: postgres
+  command: /usr/bin/postgresql-setup --initdb
+  args:
+    creates: /var/lib/pgsql/data/PG_VERSION
+  environment:
+    LC_ALL: C
+
+- name: Ensure PostgreSQL listens for connections on localhost
+  become: true
+  lineinfile:
+    state: present
+    path: /var/lib/pgsql/data/postgresql.conf
+    line: listen_addresses = '127.0.0.1'
+    regexp: ^listen_addresses
+  notify:
+    - reload postgresql
+
+- name: Ensure PostgreSQL accepts authentication from localhost
+  become: true
+  template:
+    src: pg_hba.conf
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0600
+  notify:
+    - reload postgresql
+
+- name: Ensure PostgreSQL is running
+  become: true
+  service:
+    state: started
+    name: postgresql.service
+    enabled: true

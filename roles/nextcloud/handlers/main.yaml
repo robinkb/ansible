@@ -1,0 +1,29 @@
+---
+- name: Reload HTTPD
+  become: true
+  service:
+    name: httpd.service
+    state: reloaded
+  listen: reload httpd
+
+- name: Update Nextcloud to expected version
+  become: true
+  unarchive:
+    src: https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud.version }}.tar.bz2 # yamllint disable-line
+    dest: /var/www/html/
+    extra_opts:
+      - --strip-components=1
+      - --selinux
+    remote_src: true
+    owner: apache
+    group: apache
+  listen: update nextcloud version
+
+- name: Place Nextcloud autoconfiguration
+  become: true
+  template:
+    src: autoconfig.php
+    dest: /var/www/html/config/autoconfig.php
+    owner: apache
+    group: apache
+  listen: place nextcloud autoconfig

@@ -1,0 +1,35 @@
+---
+- name: Ensure required SELinux booleans are enabled
+  become: true
+  seboolean:
+    state: true
+    name: "{{ item }}"
+    persistent: true
+  with_items:
+    - httpd_tmp_exec
+    - httpd_can_network_connect
+#    - httpd_can_network_connect_db
+
+- name: Ensure SELinux allows HTTPD write access to document root
+  become: true
+  sefcontext:
+    state: present
+    target: "{{ item }}"
+    setype: httpd_sys_rw_content_t
+    reload: true
+  with_items:
+    - /var/www/html/data(/.*)?
+    - /var/www/html/config(/.*)?
+    - /var/www/html/apps(/.*)?
+    - /var/www/html/.htaccess
+    - /var/www/html/.user.ini
+
+- name: Ensure correct SELinux filecontexts are applied
+  become: true
+  command: restorecon -Rv {{ item }}
+  register: output
+  changed_when: output.stdout != ""
+  with_items:
+    - /var/www/html/data
+    - /var/www/html/config
+    - /var/www/html/apps

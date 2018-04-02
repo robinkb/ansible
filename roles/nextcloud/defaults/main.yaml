@@ -1,0 +1,5 @@
+---
+nextcloud:
+  version: 13.0.1
+  db_username: nextcloud
+  db_password: nextcloud

@@ -1,0 +1,16 @@
+---
+- name: Rebuild haproxy configuration
+  become: true
+  assemble:
+    src: /etc/haproxy/conf.d
+    dest: /etc/haproxy/haproxy.cfg
+    delimiter: '\n### START FRAGMENT ###'
+    validate: 'haproxy -c -V -f %s'
+  listen: reload haproxy
+
+- name: Reload haproxy server
+  become: true
+  service:
+    name: haproxy.service
+    state: reloaded
+  listen: reload haproxy

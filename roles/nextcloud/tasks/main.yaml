@@ -1,0 +1,133 @@
+---
+- name: Ensure HTTPD is installed
+  become: true
+  package:
+    state: present
+    name: httpd
+
+- name: Ensure HTTPD does not listen on port 80
+  become: true
+  lineinfile:
+    state: absent
+    path: /etc/httpd/conf/httpd.conf
+    line: Listen 80
+  notify:
+    - reload httpd
+
+- name: Ensure PHP modules are installed
+  become: true
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - php
+    - php-common
+    - php-gd
+    - php-intl
+    - php-json
+    - php-mbstring
+    - php-mcrypt
+    - php-pecl-apcu
+    - php-pecl-imagick
+    - php-pecl-zip
+    - php-pgsql
+    - php-process
+    - php-xml
+
+- name: Ensure utility software is installed
+  become: true
+  package:
+    state: present
+    name: unzip
+
+- name: Ensure Nextcloud directories are present
+  become: true
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: apache
+    group: apache
+  with_items:
+    - /var/www/html/apps
+    - /var/www/html/config
+    - /var/www/html/data
+
+- include: selinux.yaml
+  when: ansible_selinux
+
+- name: Ensure Nextcloud is up-to-date
+  lineinfile:
+    state: present
+    dest: /var/www/html/version.php
+    line: "$OC_VersionString = '{{ nextcloud.version }}';"
+  register: result
+  check_mode: true
+  failed_when: false
+  changed_when: result.changed or result.failed
+  notify:
+    - update nextcloud version
+
+- name: Ensure Nextcloud is configured
+  file:
+    state: file
+    dest: /var/www/html/config/config.php
+  register: result
+  check_mode: true
+  failed_when: false
+  changed_when: result.changed or result.failed
+  notify:
+    - place nextcloud autoconfig
+
+- name: Ensure httpd configuration is present
+  become: true
+  template:
+    src: httpd.conf
+    dest: /etc/httpd/conf.d/nextcloud.conf
+    owner: apache
+    group: apache
+  notify:
+    - reload httpd
+
+- name: Ensure proxy configuration is present
+  become: true
+  template:
+    src: proxy.cfg
+    dest: /etc/haproxy/conf.d/50-nextcloud.cfg
+  notify:
+    - reload haproxy
+
+- name: Ensure HTTPD service is running and enabled
+  become: true
+  service:
+    state: started
+    name: httpd.service
+    enabled: true
+
+- name: Ensure Nextcloud PostgreSQL user is present
+  tags: tryout
+  become: true
+  become_user: postgres
+  postgresql_user:
+    state: present
+    name: "{{ nextcloud.db_username }}"
+    password: "{{ nextcloud.db_password }}"
+
+- name: Ensure Nextcloud PostgreSQL database is present
+  tags: tryout
+  become: true
+  become_user: postgres
+  postgresql_db:
+    state: present
+    name: nextcloud
+    owner: nextcloud
+
+- name: Ensure Nextcloud has privileges on PostgreSQL database
+  tags: tryout
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    state: present
+    database: nextcloud
+    privs: ALL
+    roles: "{{ nextcloud.db_username }}"
+    type: database
