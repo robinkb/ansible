@@ -9,7 +9,7 @@
 - name: Update Nextcloud to expected version
   become: true
   unarchive:
-    src: https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud.version }}.tar.bz2 # yamllint disable-line
+    src: https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2 # yamllint disable-line
     dest: /var/www/html/
     extra_opts:
       - --strip-components=1

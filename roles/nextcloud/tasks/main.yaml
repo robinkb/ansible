@@ -27,6 +27,7 @@
     - php-json
     - php-mbstring
     - php-mcrypt
+    - php-opcache
     - php-pecl-apcu
     - php-pecl-imagick
     - php-pecl-zip
@@ -59,7 +60,7 @@
   lineinfile:
     state: present
     dest: /var/www/html/version.php
-    line: "$OC_VersionString = '{{ nextcloud.version }}';"
+    line: "$OC_VersionString = '{{ nextcloud_version }}';"
   register: result
   check_mode: true
   failed_when: false
@@ -96,6 +97,12 @@
   notify:
     - reload haproxy
 
+- name: Ensure PHP configuration is present
+  become: true
+  template:
+    src: php.ini
+    dest: /etc/php.d/99-nextcloud.ini
+
 - name: Ensure HTTPD service is running and enabled
   become: true
   service:
@@ -109,8 +116,8 @@
   become_user: postgres
   postgresql_user:
     state: present
-    name: "{{ nextcloud.db_username }}"
-    password: "{{ nextcloud.db_password }}"
+    name: "{{ nextcloud_db_username }}"
+    password: "{{ nextcloud_db_password }}"
 
 - name: Ensure Nextcloud PostgreSQL database is present
   tags: tryout
@@ -129,5 +136,5 @@
     state: present
     database: nextcloud
     privs: ALL
-    roles: "{{ nextcloud.db_username }}"
+    roles: "{{ nextcloud_db_username }}"
     type: database

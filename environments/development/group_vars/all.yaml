@@ -1,3 +1,7 @@
 ---
 avahi:
   enabled: true
+
+nextcloud_domain: testbox.local
+nextcloud_trusted_domains:
+  - testbox.local
