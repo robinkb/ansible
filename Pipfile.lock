@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "68d733f9f9cf6bd9a1c38eb1c17757e865780fb3d971c051e5da5ea9586ab984"
+            "sha256": "61074ff77611a460802ae1960cc8e051ffb9176ca228d49e466aff3bdac50463"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -22,6 +22,13 @@
             ],
             "index": "pypi",
             "version": "==2.6.1"
+        },
+        "ansible-lint": {
+            "hashes": [
+                "sha256:7686dad54aab9281562a5788415af1488b9af8a5acc99c042ecb9959b6ab7a57"
+            ],
+            "index": "pypi",
+            "version": "==3.4.23"
         },
         "asn1crypto": {
             "hashes": [
@@ -166,6 +173,12 @@
             ],
             "version": "==2.4.1"
         },
+        "pathspec": {
+            "hashes": [
+                "sha256:be664567cf96a718a68b33329862d1e6f6803ef9c48a6e2636265806cfceb29d"
+            ],
+            "version": "==0.5.6"
+        },
         "pyasn1": {
             "hashes": [
                 "sha256:24f21b4fd2dc2b344dee2205fa3930464aa21292216d3d6e39007a2e059e21af",
@@ -248,6 +261,14 @@
                 "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
             ],
             "version": "==1.11.0"
+        },
+        "yamllint": {
+            "hashes": [
+                "sha256:93e255e4bd96c7c0850bf182b09f6b35625130f15b37a0e03d8bf378d747081c",
+                "sha256:e9b7dec24921ef13180902e5dbcaae9157c773e3e3e2780ef77d3a4dd67d799f"
+            ],
+            "index": "pypi",
+            "version": "==1.11.1"
         }
     },
     "develop": {}

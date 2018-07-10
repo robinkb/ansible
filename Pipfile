@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 ansible = "*"
 invoke = "*"
+yamllint = "*"
+ansible-lint = "*"
 
 [dev-packages]
 
