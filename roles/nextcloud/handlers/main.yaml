@@ -19,11 +19,24 @@
     group: apache
   listen: update nextcloud version
 
-- name: Place Nextcloud autoconfiguration
+- name: Install Nextcloud
   become: true
-  template:
-    src: autoconfig.php
-    dest: /var/www/html/config/autoconfig.php
-    owner: apache
-    group: apache
-  listen: place nextcloud autoconfig
+  become_user: apache
+  command: |
+    php /var/www/html/occ maintenance:install     \
+      --database=pgsql                            \
+      --database-name=nextcloud                   \
+      --database-host={{ nextcloud_db_host }}     \
+      --database-user={{ nextcloud_db_username }} \
+      --database-pass={{ nextcloud_db_password }} \
+      --database-table-prefix=nc_                 \
+      --admin-user=admin                          \
+      --admin-pass=admin                          \
+      --data-dir=/var/www/html/data
+  listen: install nextcloud
+
+- name: Update Nextcloud .htaccess file
+  become: true
+  become_user: apache
+  command: php /var/www/html/occ maintenance:update:htaccess
+  listen: update nextcloud htaccess

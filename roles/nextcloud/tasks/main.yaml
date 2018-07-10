@@ -68,16 +68,38 @@
   notify:
     - update nextcloud version
 
-- name: Ensure Nextcloud is configured
-  file:
-    state: file
-    dest: /var/www/html/config/config.php
+- name: Ensure Nextcloud is installed
+  become: true
+  become_user: apache
+  command: grep -Pe "'installed' => true" /var/www/html/config/config.php
   register: result
-  check_mode: true
   failed_when: false
-  changed_when: result.changed or result.failed
+  changed_when: result.failed
   notify:
-    - place nextcloud autoconfig
+    - install nextcloud
+
+- name: Ensure Nextcloud is configured
+  become: true
+  tags: tryout
+  template:
+    src: "{{ item }}"
+    dest: /var/www/html/config/{{ item }}
+  with_items:
+    - apcu.config.php
+    - logging.config.php
+    - pretty-urls.config.php
+    - proxy.config.php
+    - security.config.php
+    - trusted-domains.config.php
+
+- name: Ensure .htaccess file contains rewrite rules
+  tags: tryout
+  command: grep -Pe "^\s*RewriteBase.*$" /var/www/html/.htaccess
+  register: result
+  failed_when: false
+  changed_when: result.failed
+  notify:
+    - update nextcloud htaccess
 
 - name: Ensure httpd configuration is present
   become: true
