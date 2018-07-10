@@ -30,8 +30,8 @@
       --database-user={{ nextcloud_db_username }} \
       --database-pass={{ nextcloud_db_password }} \
       --database-table-prefix=nc_                 \
-      --admin-user=admin                          \
-      --admin-pass=admin                          \
+      --admin-user={{ nextcloud_admin_username }} \
+      --admin-pass={{ nextcloud_admin_password }} \
       --data-dir=/var/www/html/data
   listen: install nextcloud
 
