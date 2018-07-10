@@ -9,7 +9,7 @@
   become: true
   package:
     state: present
-    name: python2-psycopg2
+    name: python3-psycopg2
 
 - name: Ensure PostgreSQL database is initialized
   become: true

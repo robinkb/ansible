@@ -4,6 +4,7 @@ import os
 # Third party
 from invoke import task
 
+
 @task
 def dev_setup(ctx):
     ctx.run("ansible-playbook --ask-become-pass playbooks/development-setup.yaml")
@@ -15,7 +16,7 @@ def lint(ctx):
 
     for root, dirs, files in os.walk("playbooks/"):
         for file in files:
-            if file.endswith('.yaml'):
+            if file.endswith(".yaml"):
                 ctx.run("ansible-lint %s" % os.path.join("playbooks/", file))
 
     print("Linting successful, all good to go!")
@@ -43,4 +44,6 @@ def test(ctx):
 
 @task
 def tryout(ctx):
-    ctx.run("ansible-playbook -i environments/development/ playbooks/playbook.yaml --tags tryout")
+    ctx.run(
+        "ansible-playbook -i environments/development/ playbooks/playbook.yaml --tags tryout"
+    )

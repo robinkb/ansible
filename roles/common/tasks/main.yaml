@@ -9,7 +9,7 @@
     - firewalld
     - libselinux-python        # Manage SELinux
     - policycoreutils-python   # Manage SELinux
-    - python-firewall          # Manage Firewalld
+    - python3-firewall         # Manage Firewalld
     - setroubleshoot-server
 
 - name: Ensure SELinux is set to enforcing
