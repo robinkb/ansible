@@ -99,6 +99,22 @@
   notify:
     - update nextcloud htaccess
 
+- name: Ensure Nextcloud Cron Systemd service and timer are installed
+  become: true
+  template:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/{{ item }}
+  with_items:
+    - nextcloud-cron.service
+    - nextcloud-cron.timer
+
+- name: Ensure Nextcloud Cron timer is enabled
+  become: true
+  service:
+    name: nextcloud-cron.timer
+    state: started
+    enabled: true
+
 - name: Ensure httpd configuration is present
   become: true
   template:

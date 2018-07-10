@@ -1,0 +1,9 @@
+[Unit]
+Description=Nextcloud cron.php job
+
+[Service]
+User=apache
+ExecStart=/usr/bin/php -f /var/www/html/cron.php
+
+[Install]
+WantedBy=basic.target
