@@ -80,7 +80,6 @@
 
 - name: Ensure Nextcloud is configured
   become: true
-  tags: tryout
   template:
     src: "{{ item }}"
     dest: /var/www/html/config/{{ item }}
@@ -93,7 +92,6 @@
     - trusted-domains.config.php
 
 - name: Ensure .htaccess file contains rewrite rules
-  tags: tryout
   command: grep -Pe "^\s*RewriteBase.*$" /var/www/html/.htaccess
   register: result
   failed_when: false
@@ -133,7 +131,6 @@
     enabled: true
 
 - name: Ensure Nextcloud PostgreSQL user is present
-  tags: tryout
   become: true
   become_user: postgres
   postgresql_user:
@@ -142,7 +139,6 @@
     password: "{{ nextcloud_db_password }}"
 
 - name: Ensure Nextcloud PostgreSQL database is present
-  tags: tryout
   become: true
   become_user: postgres
   postgresql_db:
@@ -151,7 +147,6 @@
     owner: nextcloud
 
 - name: Ensure Nextcloud has privileges on PostgreSQL database
-  tags: tryout
   become: true
   become_user: postgres
   postgresql_privs:
