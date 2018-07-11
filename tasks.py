@@ -39,7 +39,7 @@ def clean(ctx):
 
 @task(pre=[lint])
 def test(ctx, check=False):
-    command = "ansible-playbook -i environments/development/ playbooks/playbook.yaml"
+    command = "ansible-playbook -i environments/development/ playbooks/configure.yaml"
 
     if check:
         command += " --check"
@@ -50,5 +50,5 @@ def test(ctx, check=False):
 @task
 def tryout(ctx):
     ctx.run(
-        "ansible-playbook -i environments/development/ playbooks/playbook.yaml --tags tryout"
+        "ansible-playbook -i environments/development/ playbooks/configure.yaml --tags tryout"
     )
