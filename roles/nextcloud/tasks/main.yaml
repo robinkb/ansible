@@ -60,7 +60,7 @@
   lineinfile:
     state: present
     dest: /var/www/html/version.php
-    line: "$OC_VersionString = '{{ nextcloud_version }}';"
+    line: "$OC_VersionString = '{{ nextcloud.version }}';"
   register: result
   check_mode: true
   failed_when: false
@@ -151,8 +151,8 @@
   become_user: postgres
   postgresql_user:
     state: present
-    name: "{{ nextcloud_db_username }}"
-    password: "{{ nextcloud_db_password }}"
+    name: "{{ nextcloud.db_username }}"
+    password: "{{ nextcloud.db_password }}"
 
 - name: Ensure Nextcloud PostgreSQL database is present
   become: true
@@ -169,5 +169,5 @@
     state: present
     database: nextcloud
     privs: ALL
-    roles: "{{ nextcloud_db_username }}"
+    roles: "{{ nextcloud.db_username }}"
     type: database

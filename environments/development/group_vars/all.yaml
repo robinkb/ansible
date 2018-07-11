@@ -4,6 +4,7 @@ ansible_python_interpreter: /usr/bin/python3
 avahi:
   enabled: true
 
-nextcloud_domain: testbox.local
-nextcloud_trusted_domains:
-  - testbox.local
+nextcloud:
+  domain: testbox.local
+  trusted_domains:
+    - testbox.local

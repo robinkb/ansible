@@ -1,11 +1,12 @@
 ---
-nextcloud_version: 13.0.1
-nextcloud_domain: localhost
-nextcloud_trusted_domains:
-  - localhost
-nextcloud_datadirectory: /var/www/nextcloud/data
-nextcloud_db_host: localhost
-nextcloud_db_username: nextcloud
-nextcloud_db_password: UzHreCnPFygQy8xQU75EB4qJM7VuSgEAo3kef2l9
-nextcloud_admin_username: admin
-nextcloud_admin_password: admin
+nextcloud:
+  version: 13.0.1
+  domain: localhost
+  trusted_domains:
+    - localhost
+  datadirectory: /var/www/nextcloud/data
+  db_host: localhost
+  db_username: nextcloud
+  db_password: UzHreCnPFygQy8xQU75EB4qJM7VuSgEAo3kef2l9
+  admin_username: admin
+  admin_password: admin

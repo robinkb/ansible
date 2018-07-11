@@ -9,7 +9,7 @@
 - name: Update Nextcloud to expected version
   become: true
   unarchive:
-    src: https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2 # yamllint disable-line
+    src: https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud.version }}.tar.bz2 # yamllint disable-line
     dest: /var/www/html/
     extra_opts:
       - --strip-components=1
@@ -26,12 +26,12 @@
     php /var/www/html/occ maintenance:install     \
       --database=pgsql                            \
       --database-name=nextcloud                   \
-      --database-host={{ nextcloud_db_host }}     \
-      --database-user={{ nextcloud_db_username }} \
-      --database-pass={{ nextcloud_db_password }} \
+      --database-host={{ nextcloud.db_host }}     \
+      --database-user={{ nextcloud.db_username }} \
+      --database-pass={{ nextcloud.db_password }} \
       --database-table-prefix=nc_                 \
-      --admin-user={{ nextcloud_admin_username }} \
-      --admin-pass={{ nextcloud_admin_password }} \
+      --admin-user={{ nextcloud.admin_username }} \
+      --admin-pass={{ nextcloud.admin_password }} \
       --data-dir=/var/www/html/data
   listen: install nextcloud
 
