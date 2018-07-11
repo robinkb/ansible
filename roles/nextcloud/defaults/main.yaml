@@ -4,7 +4,7 @@ nextcloud:
   domain: localhost
   trusted_domains:
     - localhost
-  datadirectory: /var/www/nextcloud/data
+  data_directory: /var/www/nextcloud/data
   db_host: localhost
   db_username: nextcloud
   db_password: UzHreCnPFygQy8xQU75EB4qJM7VuSgEAo3kef2l9

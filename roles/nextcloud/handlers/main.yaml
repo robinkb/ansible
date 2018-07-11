@@ -32,7 +32,7 @@
       --database-table-prefix=nc_                 \
       --admin-user={{ nextcloud.admin_username }} \
       --admin-pass={{ nextcloud.admin_password }} \
-      --data-dir=/var/www/html/data
+      --data-dir={{ nextcloud.data_directory }}
   listen: install nextcloud
 
 - name: Update Nextcloud .htaccess file

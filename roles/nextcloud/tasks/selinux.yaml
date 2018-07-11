@@ -18,7 +18,7 @@
     setype: httpd_sys_rw_content_t
     reload: true
   with_items:
-    - /var/www/html/data(/.*)?
+    - "{{ nextcloud.data_directory }}(/.*)?"
     - /var/www/html/config(/.*)?
     - /var/www/html/apps(/.*)?
     - /var/www/html/.htaccess
@@ -30,6 +30,6 @@
   register: output
   changed_when: output.stdout != ""
   with_items:
-    - /var/www/html/data
+    - "{{ nextcloud.data_directory }}"
     - /var/www/html/config
     - /var/www/html/apps

@@ -51,7 +51,7 @@
   with_items:
     - /var/www/html/apps
     - /var/www/html/config
-    - /var/www/html/data
+    - "{{ nextcloud.data_directory }}"
 
 - include: selinux.yaml
   when: ansible_selinux
