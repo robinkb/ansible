@@ -38,8 +38,13 @@ def clean(ctx):
 
 
 @task(pre=[lint])
-def test(ctx):
-    ctx.run("ansible-playbook -i environments/development/ playbooks/playbook.yaml")
+def test(ctx, check=False):
+    command = "ansible-playbook -i environments/development/ playbooks/playbook.yaml"
+
+    if check:
+        command += " --check"
+
+    ctx.run(command)
 
 
 @task
