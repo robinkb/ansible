@@ -1,0 +1,28 @@
+---
+ansible_python_interpreter: /usr/bin/python3
+
+nextcloud:
+  domain: cloud.hacky.systems
+  trusted_domains:
+    - cloud.hacky.systems
+
+  db_password: "{{ vault.nextcloud.db_password }}"
+
+  admin_username: "{{ vault.nextcloud.admin_username }}"
+  admin_password: "{{ vault.nextcloud.admin_password }}"
+
+traefik:
+  host: traefik.hacky.systems
+
+  acme:
+    enabled: true
+    email: robin.ketelbuters@gmail.com
+    ca_server: "https://acme-v02.api.letsencrypt.org/directory"
+
+    dns_challenge:
+      provider: vultr
+
+    domain: "hacky.systems"
+
+  environment:
+    VULTR_API_KEY: "{{ vault.traefik.vultr_api_key }}"

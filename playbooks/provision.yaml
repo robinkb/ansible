@@ -1,0 +1,113 @@
+---
+- hosts: localhost
+
+  environment:
+    # Ansible module for Vultr has some really stupid behaviour.
+    # It tries to look for a ~/.vultr.ini file if one of these
+    # environment variables is not present, even though all
+    # but VULTR_API_KEY is optional.
+    VULTR_API_ACCOUNT: default
+    VULTR_API_ENDPOINT: https://api.vultr.com
+    VULTR_API_RETRIES: 5
+    VULTR_API_TIMEOUT: 60
+    VULTR_API_KEY: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      36353236636366616166333233663361616638323934636635333765643564316532333033623639
+      3634346630613732396233633235666433303862306239660a363762386134336431613365326430
+      65326566333436623134646533313137346330373066626438633766336436336361343133346131
+      6532653039333336390a396538303031336265613639363665376632626664643266386431643039
+      61373330616639323465366335386530346232316366366365353663386436323735386161663733
+      3635346530663138353432313564396135303133613566393430
+
+  tasks:
+    - name: Ensure personal public SSH key is present
+      local_action:
+        module: vr_ssh_key
+        name: robink_personal
+        state: present
+        ssh_key: "{{ lookup('file', '~/.ssh/id_rsa_vultr.pub') }}"
+
+    - name: Ensure Hacky Systems firewall group is defined
+      local_action:
+        module: vr_firewall_group
+        name: hacky_systems
+        state: present
+
+    - name: Ensure Hacky Systems firewall group allows SSH
+      local_action:
+        module: vr_firewall_rule
+        state: present
+        group: hacky_systems
+        protocol: tcp
+        start_port: 22
+        ip_version: "{{ item }}"
+      loop: [v4, v6]
+
+    - name: Ensure Hacky Systems firewall group allows HTTP
+      local_action:
+        module: vr_firewall_rule
+        state: present
+        group: hacky_systems
+        protocol: tcp
+        start_port: 80
+        ip_version: "{{ item }}"
+      loop: [v4, v6]
+
+    - name: Ensure Hacky Systems firewall group allows HTTPS
+      local_action:
+        module: vr_firewall_rule
+        state: present
+        group: hacky_systems
+        protocol: tcp
+        start_port: 443
+        ip_version: "{{ item }}"
+      loop: [v4, v6]
+
+    - name: Ensure Hacky Systems One is provisioned
+      local_action:
+        module: vr_server
+        name: hacky_systems_one
+        state: present
+        hostname: one.hacky.systems
+        os: Fedora 28 x64
+        plan: 1024 MB RAM,25 GB SSD,1.00 TB BW
+        region: Amsterdam
+        ssh_keys:
+          - robink_personal
+        firewall_group: hacky_systems
+        ipv6_enabled: true
+        auto_backup_enabled: false  # Ain't no one got money fo' that
+      register: hacky_systems_one
+
+    - name: Ensure Hacky Systems DNS domain is defined
+      local_action:
+        module: vr_dns_domain
+        name: hacky.systems
+        server_ip: "{{ hacky_systems_one.vultr_server.v4_main_ip }}"
+
+    - name: Ensure Hacky Systems DNS CAA record is defined
+      local_action:
+        module: vr_dns_record
+        state: present
+        domain: hacky.systems
+        name: hacky.systems
+        record_type: CAA
+        data: 128 issue "letsencrypt.org"
+
+    - name: Ensure Hacky Systems One DNS record is defined
+      local_action:
+        module: vr_dns_record
+        state: present
+        domain: hacky.systems
+        name: one
+        record_type: A
+        data: "{{ hacky_systems_one.vultr_server.v4_main_ip }}"
+
+    - name: Ensure Hacky Systems Cloud DNS record points to Hacky Systems One
+      local_action:
+        module: vr_dns_record
+        state: present
+        domain: hacky.systems
+        name: cloud
+        record_type: CNAME
+        data: one.hacky.systems
