@@ -37,7 +37,7 @@ def clean(ctx):
     pass
 
 
-@task(pre=[lint])
+@task
 def test(ctx, check=False):
     command = "ansible-playbook -i environments/development/ playbooks/configure.yaml"
 

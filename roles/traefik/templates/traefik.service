@@ -1,0 +1,11 @@
+[Unit]
+Description=Træfik is a modern HTTP reverse proxy and load balancer.
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/traefik
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

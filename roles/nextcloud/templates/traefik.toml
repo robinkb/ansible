@@ -1,0 +1,19 @@
+[backends]
+    [backends.nextcloud]
+        [backends.nextcloud.servers]
+            [backends.nextcloud.servers.main]
+            url = "http://127.0.0.1:8080"
+
+[frontends]
+    [frontends.nextcloud]
+    backend = "nextcloud"
+    passHostHeader = true
+
+        [frontends.nextcloud.headers]
+        STSSeconds = 15552000
+        STSIncludeSubdomains = true
+        STSPreload = true
+
+        [frontends.nextcloud.routes]
+            [frontends.nextcloud.routes.main]
+            rule = "Host:{{ nextcloud.domain }}"

@@ -1,0 +1,52 @@
+---
+- name: Ensure Traefik binary is present
+  become: true
+  get_url:
+    url: https://github.com/containous/traefik/releases/download/v1.6.5/traefik_linux-amd64
+    dest: /usr/sbin/traefik
+    mode: 0755
+
+- name: Ensure Traefik directory structure is present
+  become: true
+  file:
+    state: directory
+    path: "{{ item }}"
+  loop:
+    - /etc/traefik
+    - /etc/traefik/rules.d
+
+- name: Ensure Traefik configuration file is present
+  become: true
+  template:
+    src: traefik.toml
+    dest: /etc/traefik/traefik.toml
+
+- name: Ensure Traefik management rules are present
+  become: true
+  template:
+    src: management.toml
+    dest: /etc/traefik/rules.d/management.toml
+
+- name: Ensure Traefik Systemd unit file is present
+  become: true
+  template:
+    src: traefik.service
+    dest: /etc/systemd/system/traefik.service
+
+- name: Ensure Traefik service is running and enabled
+  become: true
+  service:
+    state: started
+    name: traefik.service
+    enabled: true
+
+- name: Ensure HTTP and HTTPS ports are opened
+  become: true
+  firewalld:
+    state: enabled
+    service: "{{ item }}"
+    immediate: true
+    permanent: true
+  with_items:
+    - http
+    - https

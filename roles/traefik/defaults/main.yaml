@@ -1,0 +1,13 @@
+---
+traefik:
+  host: traefik.local
+
+  acme:
+    enabled: false
+    email:
+    ca_server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+    dns_challenge:
+      provider:
+
+    domain:

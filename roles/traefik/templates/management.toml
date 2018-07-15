@@ -1,0 +1,15 @@
+[backends]
+
+    [backends.traefik]
+        [backends.traefik.servers]
+            [backends.traefik.servers.main]
+            url = "http://127.0.0.1:8081"
+
+[frontends]
+
+    [frontends.traefik]
+    backend = "traefik"
+
+        [frontends.traefik.routes]
+            [frontends.traefik.routes.main]
+            rule = "Host:{{ traefik.host }}"

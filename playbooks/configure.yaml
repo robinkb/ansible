@@ -2,6 +2,6 @@
 - hosts: all-in-one
 
   roles:
-    - role: haproxy
+    - role: traefik
     - role: postgresql
     - role: nextcloud

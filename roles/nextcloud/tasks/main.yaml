@@ -128,10 +128,8 @@
 - name: Ensure proxy configuration is present
   become: true
   template:
-    src: proxy.cfg
-    dest: /etc/haproxy/conf.d/50-nextcloud.cfg
-  notify:
-    - reload haproxy
+    src: traefik.toml
+    dest: /etc/traefik/rules.d/nextcloud.toml
 
 - name: Ensure PHP configuration is present
   become: true
