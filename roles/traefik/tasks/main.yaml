@@ -13,6 +13,7 @@
     path: "{{ item }}"
   loop:
     - /etc/traefik
+    - /etc/traefik/acme
     - /etc/traefik/rules.d
 
 - name: Ensure Traefik configuration file is present

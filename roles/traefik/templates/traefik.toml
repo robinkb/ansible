@@ -56,15 +56,16 @@ defaultEntryPoints = ["http", "https"]
 
 [acme]
 email = "{{ traefik.acme.email }}"
-storage = "acme.json"
+storage = "/etc/traefik/acme/acme.json"
 caServer = "{{ traefik.acme.ca_server }}"
 entryPoint = "https"
 
     [acme.dnsChallenge]
     provider = "{{ traefik.acme.dns_challenge.provider }}"
+    delayBeforeCheck = 30
 
 [[acme.domains]]
-main = "{{ traefik.acme.domain }}"
+main = "*.{{ traefik.acme.domain }}"
 {% endif %}
 
 ################################################################
@@ -103,7 +104,7 @@ format = "common"
 #
 # Optional
 #
-[accessLog]
+# [accessLog]
 
 # Sets the file path for the access log. If not specified, stdout will be used.
 # Intermediate directories are created if necessary.
@@ -118,7 +119,7 @@ format = "common"
 # Optional
 # Default: "common"
 #
-format = "common"
+# format = "common"
 
 ################################################################
 # API and dashboard configuration
