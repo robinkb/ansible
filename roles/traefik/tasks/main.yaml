@@ -27,6 +27,12 @@
     src: management.toml
     dest: /etc/traefik/rules.d/management.toml
 
+- name: Ensure Traefik environment file is present
+  become: true
+  template:
+    src: sysconfig
+    dest: /etc/sysconfig/traefik
+
 - name: Ensure Traefik Systemd unit file is present
   become: true
   template:

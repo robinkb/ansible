@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+{% if traefik.environment %}
+{% for key, value in traefik.environment.items() %}
+{{ key }}={{ value }}
+{% endfor %}
+{% endif %}

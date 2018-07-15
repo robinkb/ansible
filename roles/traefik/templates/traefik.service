@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+EnvironmentFile=/etc/sysconfig/traefik
 ExecStart=/usr/sbin/traefik
 Restart=always
 

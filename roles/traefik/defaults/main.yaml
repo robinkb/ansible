@@ -11,3 +11,5 @@ traefik:
       provider:
 
     domain:
+
+  environment:
