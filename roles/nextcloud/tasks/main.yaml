@@ -158,7 +158,7 @@
   postgresql_db:
     state: present
     name: nextcloud
-    owner: nextcloud
+    owner: "{{ nextcloud.db_username }}"
 
 - name: Ensure Nextcloud has privileges on PostgreSQL database
   become: true
