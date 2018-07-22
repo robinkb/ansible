@@ -1,0 +1,23 @@
+---
+- name: Install Traefik
+  become: true
+  get_url:
+    url: https://github.com/containous/traefik/releases/download/v{{ traefik.version }}/traefik_linux-amd64
+    dest: /usr/sbin/traefik
+    mode: 0755
+    force: true
+  listen: install traefik
+  notify:
+    - restart traefik
+
+- name: Restart Traefik
+  become: true
+  service:
+    state: restarted
+    name: traefik.service
+  listen: restart traefik
+
+- name: Reload SystemD daemon
+  become: true
+  command: systemctl daemon-reload
+  listen: systemd reload

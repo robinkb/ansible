@@ -1,5 +1,6 @@
 ---
 traefik:
+  version: 1.6.5
   host: traefik.local
 
   acme:

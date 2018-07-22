@@ -1,10 +1,11 @@
 ---
-- name: Ensure Traefik binary is present
-  become: true
-  get_url:
-    url: https://github.com/containous/traefik/releases/download/v1.6.5/traefik_linux-amd64
-    dest: /usr/sbin/traefik
-    mode: 0755
+- name: Ensure Traefik is installed with the expected verson
+  shell: /usr/sbin/traefik version | grep -Pe "Version:\s+v{{ traefik.version }}"
+  register: result
+  failed_when: false
+  changed_when: result.failed
+  notify:
+    - install traefik
 
 - name: Ensure Traefik directory structure is present
   become: true
@@ -21,31 +22,33 @@
   template:
     src: traefik.toml
     dest: /etc/traefik/traefik.toml
+  notify:
+    - restart traefik
 
 - name: Ensure Traefik management rules are present
   become: true
   template:
     src: management.toml
     dest: /etc/traefik/rules.d/management.toml
+  notify:
+    - restart traefik
 
 - name: Ensure Traefik environment file is present
   become: true
   template:
     src: sysconfig
     dest: /etc/sysconfig/traefik
+  notify:
+    - restart traefik
 
 - name: Ensure Traefik Systemd unit file is present
   become: true
   template:
     src: traefik.service
     dest: /etc/systemd/system/traefik.service
-
-- name: Ensure Traefik service is running and enabled
-  become: true
-  service:
-    state: started
-    name: traefik.service
-    enabled: true
+  notify:
+    - systemd reload
+    - restart traefik
 
 - name: Ensure HTTP and HTTPS ports are opened
   become: true
@@ -57,3 +60,12 @@
   with_items:
     - http
     - https
+
+- meta: flush_handlers
+
+- name: Ensure Traefik service is running and enabled
+  become: true
+  service:
+    state: started
+    name: traefik.service
+    enabled: true
