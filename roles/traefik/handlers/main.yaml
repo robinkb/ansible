@@ -12,12 +12,8 @@
 
 - name: Restart Traefik
   become: true
-  service:
+  systemd:
     state: restarted
     name: traefik.service
+    daemon_reload: true
   listen: restart traefik
-
-- name: Reload SystemD daemon
-  become: true
-  command: systemctl daemon-reload
-  listen: systemd reload

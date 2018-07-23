@@ -47,7 +47,6 @@
     src: traefik.service
     dest: /etc/systemd/system/traefik.service
   notify:
-    - systemd reload
     - restart traefik
 
 - name: Ensure HTTP and HTTPS ports are opened
@@ -65,7 +64,8 @@
 
 - name: Ensure Traefik service is running and enabled
   become: true
-  service:
+  systemd:
     state: started
     name: traefik.service
     enabled: true
+    daemon_reload: true
